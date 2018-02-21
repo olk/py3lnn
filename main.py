@@ -65,13 +65,20 @@ if __name__ == "__main__":
     parser.add_argument('--test-data', nargs='?', type=str, default="mnist_dataset/mnist_test_10.csv")
     parser.add_argument('--learning-rate', nargs='?', type=float, default=0.1)
     parser.add_argument('--epochs', nargs='?', type=int, default=5)
+    parser.add_argument('--archive', nargs='?', type=str, default="mnist_3lnn.npz")
+    parser.add_argument('--train', nargs='?', type=bool, const=True, default=False)
     args = parser.parse_args()
     # Anzahl der Input- und Output-Nodes
     input_nodes = 784 # MNIST-Bild besteht aus 28x28 Pixel
     output_nodes = 10 # Zahlen von 0...9
-    # Neuronales Netz erzeugen
-    n = create( input_nodes, args.hidden_nodes, output_nodes, args.learning_rate)
-    # Neuronales Netz trainieren
-    train( n, args.training_data, output_nodes, args.epochs)
-    # Neuronales Netz testen
-    test( n, args.test_data)
+    if ( args.train):
+        # Neuronales Netz erzeugen
+        n = create( input_nodes, args.hidden_nodes, output_nodes, args.learning_rate)
+        # Neuronales Netz trainieren
+        train( n, args.training_data, output_nodes, args.epochs)
+        n.to_file( args.archive)
+    else:
+        # Neuronales Netz aus Archiv erzeugen
+        n = nn.neural_network.from_file( args.archive)
+        # Neuronales Netz testen
+        test( n, args.test_data)
